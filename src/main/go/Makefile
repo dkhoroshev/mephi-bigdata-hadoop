@@ -1,4 +1,5 @@
 APPNAME = "generator"
+GOROOT = "../../"
 
 .PHONY: build
 build:
