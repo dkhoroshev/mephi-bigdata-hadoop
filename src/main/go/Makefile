@@ -1,9 +1,9 @@
 APPNAME = "generator"
-DIR = $(shell pwd ../../)"
+DIR = $(shell pwd)"
 
 .PHONY: build
 build:
-	GOROOT=$(DIR) go build -o ./bin/$(APPNAME) ./cmd/$(APPNAME)
+	GOROOT=$(DIR) go build -v -o ./bin/$(APPNAME) ./cmd/$(APPNAME)
 
 .PHONY: run
 run: build
