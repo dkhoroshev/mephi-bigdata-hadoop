@@ -3,7 +3,7 @@ GOROOT = "../../"
 
 .PHONY: build
 build:
-	go build -o ./bin/$(APPNAME) ./cmd/${APPNAME}
+	GOROOT = "../../" go build -o ./bin/$(APPNAME) ./cmd/${APPNAME}
 
 .PHONY: run
 run: build
