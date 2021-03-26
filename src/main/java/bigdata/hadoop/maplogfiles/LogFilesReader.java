@@ -1,28 +1,17 @@
-package bigdata.hadoop;
+package bigdata.hadoop.maplogfiles;
 
-import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.InputSplit;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.RecordReader;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.LineRecordReader;
-import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class ScreenAreaReader extends RecordReader<Text, ScreenArea> {
+public class LogFilesReader extends RecordReader<Text, LogFiles> {
     private LineRecordReader lineRecordReader = null;
     private Text key = null;
-    private ScreenArea valueSecondClass = null;
+    private LogFiles valueFirstClass = null;
 
     @Override
     public void close() throws IOException {
@@ -31,7 +20,7 @@ public class ScreenAreaReader extends RecordReader<Text, ScreenArea> {
             lineRecordReader = null;
         }
         key = null;
-        valueSecondClass = null;
+        valueFirstClass = null;
     }
 
     @Override
@@ -40,8 +29,8 @@ public class ScreenAreaReader extends RecordReader<Text, ScreenArea> {
     }
 
     @Override
-    public ScreenArea getCurrentValue() throws IOException, InterruptedException {
-        return valueSecondClass;
+    public LogFiles getCurrentValue() throws IOException, InterruptedException {
+        return valueFirstClass;
     }
 
     @Override
@@ -52,7 +41,6 @@ public class ScreenAreaReader extends RecordReader<Text, ScreenArea> {
     @Override
     public void initialize(InputSplit split, TaskAttemptContext context) throws IOException, InterruptedException {
         close();
-
         lineRecordReader = new LineRecordReader();
         lineRecordReader.initialize(split, context);
     }
@@ -61,21 +49,17 @@ public class ScreenAreaReader extends RecordReader<Text, ScreenArea> {
     public boolean nextKeyValue() throws IOException, InterruptedException {
         if (!lineRecordReader.nextKeyValue()) {
             key = null;
-            valueSecondClass = null;
+            valueFirstClass = null;
             return false;
         }
 
         // otherwise, take the line and parse it
         Text line = lineRecordReader.getCurrentValue();
-
         String str = line.toString();
-
-        System.out.println("ScreenArea:" + str);
+        System.out.println("FirstClass:" + str);
         String[] arr = str.split("t", -1);
-        int addi = Integer.parseInt(arr[2]);
-
         key = new Text(arr[0].trim());
-        valueSecondClass = new ScreenArea(arr[1].trim(), addi);
+        valueFirstClass = new LogFiles(arr[1].trim());
 
         return true;
     }

@@ -1,4 +1,4 @@
-package bigdata.hadoop;
+package bigdata.hadoop.maplogfiles;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -19,18 +19,15 @@ import org.apache.hadoop.mapreduce.lib.input.LineRecordReader;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class ScreenArea implements Writable {
+public class LogFiles implements Writable {
     private String value;
-    private int additional;
 
-    public ScreenArea() {
+    public LogFiles() {
         this.value = "TEST";
-        this.additional = 0;
     }
 
-    public ScreenArea(String val, int addi) {
+    public LogFiles(String val) {
         this.value = val;
-        this.additional = addi;
     }
 
     @Override
@@ -39,9 +36,7 @@ public class ScreenArea implements Writable {
             throw new IllegalArgumentException("in cannot be null");
         }
         String value = in.readUTF();
-        int addi = in.readInt();
         this.value = value.trim();
-        this.additional = addi;
     }
 
     @Override
@@ -50,10 +45,10 @@ public class ScreenArea implements Writable {
             throw new IllegalArgumentException("out cannot be null");
         }
         out.writeUTF(this.value);
-        out.writeInt(this.additional);
     }
+
     @Override
     public String toString() {
-        return "ScreenArea" + value + "t" + additional;
+        return "LogFiles" + value;
     }
 }
