@@ -2,11 +2,13 @@ package bigdata.hadoop;
 
 import bigdata.hadoop.data.ScreenAreaCounter;
 //import bigdata.hadoop.maplogfiles.LogFilesInputFormat;
+import bigdata.hadoop.data.ScreenAreaWritable;
 import bigdata.hadoop.maplogfiles.LogFilesMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 //import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
@@ -36,7 +38,11 @@ public class MapReduceApplication {
         // задаём выходной файл, разделенный запятыми - формат CSV в соответствии с заданием
         conf.set("mapreduce.output.textoutputformat.separator", ",");
         conf.set("mapreduce.input.textinputformat.separator", ",|-");
-        conf.set("ScreenAreaFile", "hdfs://namenode:9000/dic/screen_area.txt");
+        if (args.length == 3) {
+            conf.set("ScreenAreaFile", args[2]);
+        } else {
+            conf.set("ScreenAreaFile", "hdfs://namenode:9000/dic/screen_area.txt");
+        }
 
         try {
             Job job = Job.getInstance(conf, "Clicks count");
@@ -51,13 +57,13 @@ public class MapReduceApplication {
 //            MultipleInputs.addInputPath(job, ScreenAreaFile, ScreenAreaInputFormat.class, ScreenAreaMapper.class);
 
             //output format for mapper
-            job.setMapOutputKeyClass(Text.class);
-            job.setMapOutputValueClass(LongWritable.class);
+//            job.setMapOutputKeyClass(ScreenAreaWritable.class);
+//            job.setMapOutputValueClass(LongWritable.class);
 
             job.setReducerClass(ReducerHadoop.class);
             //output format for reducer
-            job.setOutputKeyClass(Text.class);
-            job.setOutputValueClass(LongWritable.class);
+            job.setOutputKeyClass(ScreenAreaWritable.class);
+            job.setOutputValueClass(IntWritable.class);
 
             /* Формат выходного файла */
             job.setOutputFormatClass(TextOutputFormat.class);

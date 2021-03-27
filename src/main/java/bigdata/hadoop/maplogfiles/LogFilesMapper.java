@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//import bigdata.hadoop.data.ScreenAreaWritable;
+import bigdata.hadoop.data.ScreenAreaCounter;
+import bigdata.hadoop.data.ScreenAreaWritable;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -20,11 +22,12 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 @Slf4j
-public class LogFilesMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
+public class LogFilesMapper extends Mapper<LongWritable, Text, ScreenAreaWritable, IntWritable> {
 
     List<String> dictPlace = new ArrayList<>();
-    Pattern dictpattern = Pattern.compile("(\\d+),(\\d+),(\\d+),(\\d+)-(\\S+)");
-    Pattern logpattern = Pattern.compile("(\\d+),(\\d+),.*$");
+    private final Pattern dictpattern = Pattern.compile("(\\d+),(\\d+),(\\d+),(\\d+)-(\\S+)");
+    private final Pattern logpattern = Pattern.compile("(\\d+),(\\d+),.*$");
+    private final IntWritable INCR = new IntWritable(1);
 
     /**
      * Метод setup используется для считывания инфо из справочника
@@ -46,11 +49,14 @@ public class LogFilesMapper extends Mapper<LongWritable, Text, Text, LongWritabl
                 }
                 // open and read from file
                 BufferedReader reader = new BufferedReader(new InputStreamReader(fs.open(screenareadict)));
-                String line;
+                String line = null;
+                Matcher dictmather;
                 while ((line = reader.readLine()) != null) {
-                    dictPlace.add(line); //add the line to ArrayList
+                    dictmather = dictpattern.matcher(line);
+                    while (dictmather.find()) {
+                        dictPlace.add(line); //add the line to ArrayList
+                    }
                 }
-
             } catch (Exception e) {
                 log.error("Unable to read ScreenArea dictionary", e);
             }
@@ -72,34 +78,23 @@ public class LogFilesMapper extends Mapper<LongWritable, Text, Text, LongWritabl
 
     @Override
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        Integer resultX = null, resultY = null;
-        Integer minX = null, maxX = null, minY = null, maxY = null;
-        Text AreaName = new Text();
+
+        ScreenAreaWritable result = new ScreenAreaWritable();
+        result.setDict(dictPlace);
 
         log.info("-----------Start mapper-----------");
-//        log.info(value.toString());
         Matcher logmatcher = logpattern.matcher(value.toString());
         while (logmatcher.find()) {
-            resultX = Integer.parseInt(logmatcher.group(1));
-            resultY = Integer.parseInt(logmatcher.group(2));
+            result.setSeverityWithScreenArea(logmatcher.group(1)
+                    + " "
+                    + logmatcher.group(2));
         }
-//        System.out.print("resultX: " + resultX);
-//        System.out.println("resultY" + resultY);
 
-        for (String dictWords : dictPlace) {
-            Matcher dictmather = dictpattern.matcher(dictWords);
-            while (dictmather.find()){
-                AreaName.set(dictmather.group(5));
-                minX = Integer.parseInt(dictmather.group(1));
-                minY = Integer.parseInt(dictmather.group(2));
-                maxX = Integer.parseInt(dictmather.group(3));
-                maxY = Integer.parseInt(dictmather.group(4));
-            }
-            if (resultX >= minX && resultX <= maxX && resultY >= minY && resultY <= maxY) {
-                context.write(AreaName, new LongWritable(1));
-            } else {
-                log.info("Wrong data");
-            }
+        result.CompareXY();
+        if (result.getSeverityWithScreenArea() != null) {
+            context.write(result, INCR);
+        } else {
+            context.getCounter(ScreenAreaCounter.PARSE_ERROR).increment(1);
         }
     }
 }
