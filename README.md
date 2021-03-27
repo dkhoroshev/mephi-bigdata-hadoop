@@ -23,5 +23,6 @@ CSV файл
 
 ## Инструкция по запуску
 ```bash
-rm -rf /
+docker-compose up -d
+
 ```
