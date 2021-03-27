@@ -1,18 +1,18 @@
 package bigdata.hadoop;
 
 import bigdata.hadoop.data.ScreenAreaCounter;
-import bigdata.hadoop.maplogfiles.LogFilesInputFormat;
+//import bigdata.hadoop.maplogfiles.LogFilesInputFormat;
 import bigdata.hadoop.maplogfiles.LogFilesMapper;
-import bigdata.hadoop.screenarea.ScreenAreaInputFormat;
-import bigdata.hadoop.screenarea.ScreenAreaMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
+//import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+//import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
@@ -27,35 +27,41 @@ public class MapReduceApplication {
 
     public static void main(String[] args) {
         if (args.length < 2) {
-            throw new RuntimeException("You should specify input, output folders, screen area and temperature reference books!");
+            throw new RuntimeException("You should specify input, output folders and screen area reference books!");
         }
         Path outputDirectory = new Path(args[1]);
         Path inputDirectory = new Path(args[0]);
-        Path SccreenAreaFile = new Path(args[2]);
 
         Configuration conf = new Configuration();
         // задаём выходной файл, разделенный запятыми - формат CSV в соответствии с заданием
         conf.set("mapreduce.output.textoutputformat.separator", ",");
         conf.set("mapreduce.input.textinputformat.separator", ",|-");
+        conf.set("ScreenAreaFile", "hdfs://namenode:9000/dic/screen_area.txt");
+
         try {
             Job job = Job.getInstance(conf, "Clicks count");
             job.setJarByClass(MapReduceApplication.class);
 
-            //use MultipleOutputs and specify different Record class and Input formats
-            MultipleInputs.addInputPath(job, inputDirectory, LogFilesInputFormat.class, LogFilesMapper.class);
-            MultipleInputs.addInputPath(job, SccreenAreaFile, ScreenAreaInputFormat.class, ScreenAreaMapper.class);
+//            job.setInputFormatClass(LogFilesInputFormat.class);
+            job.setMapperClass(LogFilesMapper.class);
+            FileInputFormat.addInputPath(job, inputDirectory);
 
-//            job.setGroupingComparatorClass(MetricsComparator.class);
-//
-//            job.setSortComparatorClass(MetricsComparator.class);
+            //use MultipleOutputs and specify different Record class and Input formats
+//            MultipleInputs.addInputPath(job, inputDirectory, LogFilesInputFormat.class, LogFilesMapper.class);
+//            MultipleInputs.addInputPath(job, ScreenAreaFile, ScreenAreaInputFormat.class, ScreenAreaMapper.class);
+
+            //output format for mapper
+            job.setMapOutputKeyClass(Text.class);
+            job.setMapOutputValueClass(LongWritable.class);
 
             job.setReducerClass(ReducerHadoop.class);
-
+            //output format for reducer
             job.setOutputKeyClass(Text.class);
-            job.setOutputValueClass(IntWritable.class);
+            job.setOutputValueClass(LongWritable.class);
 
             /* Формат выходного файла */
             job.setOutputFormatClass(TextOutputFormat.class);
+
 
             FileOutputFormat.setOutputPath(job, outputDirectory);
 
@@ -70,7 +76,8 @@ public class MapReduceApplication {
             Counter counter = job.getCounters().findCounter(ScreenAreaCounter.MALFORMED);
             log.info("=====================COUNTERS " + counter.getName() + ": " + counter.getValue() + "=====================");
         } catch (IOException e) {
-            log.error("Error job configuration");
+            log.error("Error job configuration", e);
+
         }
     }
 }
