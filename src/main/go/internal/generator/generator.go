@@ -29,6 +29,13 @@ func GenerateClicks(maxX int, maxY int, users []string) []string {
 	return clicks
 }
 
+/*
+ * Генерируем словарь зон
+ * @param screenX кол-во пикселей по X
+ * @param screenY кол-во пикселей по Y
+ * @param countX количество зон по X
+ * @param countY кол-во зон по Y
+ */
 func GenerateArea(screenX int, screenY int, countX int, countY int) []string {
 
 	area := make([]string, countX*countY)

@@ -2,7 +2,8 @@ package main
 
 import (
 	"flag"
-	"go/internal/generator"
+	//"go/internal/generator"
+	"generator/internal/generator"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -41,7 +42,15 @@ func main() {
 
 	clicksText := strings.Join(clicksArray, "\n")
 
-	errSaveClicks := ioutil.WriteFile("clicks.txt", []byte(clicksText), 0644)
+	errSaveClicks := ioutil.WriteFile("clicks1.txt", []byte(clicksText), 0644)
+	if errSaveClicks != nil {
+		log.Println(errSaveClicks)
+	}
+	errSaveClicks = ioutil.WriteFile("clicks2.txt", []byte(clicksText), 0644)
+	if errSaveClicks != nil {
+		log.Println(errSaveClicks)
+	}
+	errSaveClicks = ioutil.WriteFile("clicks3.txt", []byte(clicksText), 0644)
 	if errSaveClicks != nil {
 		log.Println(errSaveClicks)
 	}

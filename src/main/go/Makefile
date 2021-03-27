@@ -7,7 +7,7 @@ build:
 
 .PHONY: run
 run: build
-	bin/$(APPNAME) -r 1200x800 -x 2 -y 3 -t 100,200
+	bin/$(APPNAME) -r 1200x800 -x 2 -y 3 -t 1000,4000
 
 .PHONY: test
 test:
