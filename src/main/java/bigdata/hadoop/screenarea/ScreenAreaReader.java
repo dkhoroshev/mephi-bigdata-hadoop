@@ -60,7 +60,7 @@ public class ScreenAreaReader extends RecordReader<Text, ScreenArea> {
         String str = line.toString();
 
         System.out.println("ScreenArea:" + str);
-        String[] arr = str.split("t", -1);
+        String[] arr = str.split(",|-");
         int addi = Integer.parseInt(arr[2]);
 
         key = new Text(arr[0].trim());

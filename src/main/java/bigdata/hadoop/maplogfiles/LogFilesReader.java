@@ -57,7 +57,7 @@ public class LogFilesReader extends RecordReader<Text, LogFiles> {
         Text line = lineRecordReader.getCurrentValue();
         String str = line.toString();
         System.out.println("FirstClass:" + str);
-        String[] arr = str.split("t", -1);
+        String[] arr = str.split(",|-");
         key = new Text(arr[0].trim());
         valueFirstClass = new LogFiles(arr[1].trim());
 
