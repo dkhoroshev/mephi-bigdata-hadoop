@@ -33,8 +33,7 @@ public class LogFilesMapper extends Mapper<LongWritable, Text, ScreenAreaWritabl
      * Метод setup используется для считывания инфо из справочника
      * и записи данных в List<String> dictPlace.
      *
-     * @param context данные конфиrа
-     * @throws IOException при исключении ввода
+     * @param context Context of map-reduce job
      */
 
     public void setup(Context context) {
@@ -71,9 +70,7 @@ public class LogFilesMapper extends Mapper<LongWritable, Text, ScreenAreaWritabl
      *
      * @param key ключ
      * @param value значение
-     * @param context данные конфиrа
-     * @throws IOException при исключении ввода
-     * @throws InterruptedException при исключении ввода
+     * @param context Context of map-reduce job
      */
 
     @Override

@@ -3,7 +3,6 @@ package bigdata.hadoop.data;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
@@ -13,6 +12,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Custome type class for mapper and reducer
+ */
 @Data
 @EqualsAndHashCode
 public class ScreenAreaWritable implements WritableComparable<ScreenAreaWritable> {
@@ -40,6 +42,12 @@ public class ScreenAreaWritable implements WritableComparable<ScreenAreaWritable
         return new ScreenAreaWritable(keys[0]);
     }
 
+    /**
+     * Метод соотносит текущие координаты со словарем,
+     * на выходе остается только название области экрана.
+     * В случае если данные не соответствуют критерию,
+     * добавляется значение к счетчику PARSE_ERROR.
+     */
     public void CompareXY() {
         String[] keys = this.getSeverityWithScreenArea().split(" ");
         resultX = Integer.parseInt(keys[0]);

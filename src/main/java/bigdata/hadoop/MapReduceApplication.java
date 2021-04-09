@@ -48,17 +48,8 @@ public class MapReduceApplication {
             Job job = Job.getInstance(conf, "Clicks count");
             job.setJarByClass(MapReduceApplication.class);
 
-//            job.setInputFormatClass(LogFilesInputFormat.class);
             job.setMapperClass(LogFilesMapper.class);
             FileInputFormat.addInputPath(job, inputDirectory);
-
-            //use MultipleOutputs and specify different Record class and Input formats
-//            MultipleInputs.addInputPath(job, inputDirectory, LogFilesInputFormat.class, LogFilesMapper.class);
-//            MultipleInputs.addInputPath(job, ScreenAreaFile, ScreenAreaInputFormat.class, ScreenAreaMapper.class);
-
-            //output format for mapper
-//            job.setMapOutputKeyClass(ScreenAreaWritable.class);
-//            job.setMapOutputValueClass(LongWritable.class);
 
             job.setReducerClass(ReducerHadoop.class);
             //output format for reducer
@@ -67,7 +58,6 @@ public class MapReduceApplication {
 
             /* Формат выходного файла */
             job.setOutputFormatClass(TextOutputFormat.class);
-
 
             FileOutputFormat.setOutputPath(job, outputDirectory);
 
