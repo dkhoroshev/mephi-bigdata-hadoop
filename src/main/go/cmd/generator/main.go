@@ -31,7 +31,7 @@ func init() {
 
 func main() {
 	flag.Parse()
-
+	// Определяем расширение экрана
 	splitString := strings.Split(resolutionScreen, "x")
 	x, y := splitString[0], splitString[1]
 
@@ -42,6 +42,7 @@ func main() {
 
 	clicksText := strings.Join(clicksArray, "\n")
 
+	// Генерируем файлы с кликами
 	errSaveClicks := ioutil.WriteFile("clicks1.txt", []byte(clicksText), 0644)
 	if errSaveClicks != nil {
 		log.Println(errSaveClicks)
@@ -55,6 +56,8 @@ func main() {
 		log.Println(errSaveClicks)
 	}
 
+	// Определяем параметры для построения словарей
+	// справочник областей экрана
 	countX, _ := strconv.ParseInt(countX, 10, 32)
 	countY, _ := strconv.ParseInt(countY, 10, 32)
 
@@ -67,6 +70,7 @@ func main() {
 		log.Println(errScreenArea)
 	}
 
+	// справочник температур
 	splitString = strings.Split(temperature, ",")
 	t1, t2 := splitString[0], splitString[1]
 

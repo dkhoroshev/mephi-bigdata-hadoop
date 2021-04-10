@@ -12,6 +12,12 @@ func init() {
 	countRecords = 300000
 }
 
+/*
+ * Генерируем клики
+ * @param screenX кол-во пикселей по X
+ * @param screenY кол-во пикселей по Y
+ */
+
 func GenerateClicks(maxX int, maxY int, users []string) []string {
 
 	clicks := make([]string, countRecords)
@@ -68,6 +74,12 @@ func GenerateArea(screenX int, screenY int, countX int, countY int) []string {
 
 	return area
 }
+
+/*
+ * Генерируем температуру
+ * @param t1 нижняя граница кликов, делящая диапазон нижней тепмпературы и средней
+ * @param t2 вершняя граница кликов, делит диапазон средней и высокой температуры
+ */
 
 func GenerateTemperatureDirectory(t1 int, t2 int) []string {
 
