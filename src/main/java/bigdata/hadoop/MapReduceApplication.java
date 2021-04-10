@@ -1,20 +1,15 @@
 package bigdata.hadoop;
 
 import bigdata.hadoop.data.ScreenAreaCounter;
-//import bigdata.hadoop.maplogfiles.LogFilesInputFormat;
 import bigdata.hadoop.data.ScreenAreaWritable;
 import bigdata.hadoop.maplogfiles.LogFilesMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-//import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-//import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 

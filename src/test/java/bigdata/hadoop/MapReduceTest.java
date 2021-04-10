@@ -1,3 +1,4 @@
+package bigdata.hadoop;
 
 import bigdata.hadoop.ReducerHadoop;
 import bigdata.hadoop.maplogfiles.LogFilesMapper;
@@ -28,11 +29,8 @@ public class MapReduceTest {
     private final String testreducer2 = "display";
     private final String testmapper = "881,687,user3,176476791";
 
-
-
-
     @BeforeAll
-    public void setUp() throws IOException {
+    public void setUp() {
         LogFilesMapper mapper = new LogFilesMapper();
         ReducerHadoop reducer = new ReducerHadoop();
         mapDriver = MapDriver.newMapDriver(mapper);
